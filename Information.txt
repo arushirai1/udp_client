@@ -1,0 +1,25 @@
+Information I need:
+- what the buffer is going to look like
+- 
+
+What I need to do:
+UDP for regular, continuous updates (Video frames) and TCP for large, infrequent, vital updates
+
+2 ports will be occupied
+one for UDP and 1 for TCP
+and you need to be able to send/recieve on both
+for each, have a send buffer and a recieve buffer
+and functions to add things to the send buffer and retrieve stuff from the recieve buffer
+
+whenever you empty the send buffer, have a timestamp for both when it was sent and when it was added to the buffer
+
+and for recieving when it was recieved and when it was emptied from the buffer
+
+Questions:
+When you add data to a stack, is it the actual object or a copy of the object
+
+Further Notes:
+- when send() and addToSendBuffer() are supposed to be used
+- possibly issue a warning when too many items are in the buffer
+- remember to update IC functions
+- remember to close the socket
