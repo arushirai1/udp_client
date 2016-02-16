@@ -13,19 +13,10 @@ UDP_Server::UDP_Server(	char recipientAddr[128]) {
 //ic
 void UDP_Server::start() {
 	//set up server here
-	/*if ((recipient.sin_addr.s_addr = inet_addr(recipientAddr))
-											== INADDR_NONE) {
-		struct hostent *host = NULL;
-		host = gethostbyname(recipientAddr);
-			if (host)
-				copy(&recipient.sin_addr, host->h_addr_list[0], host->h_length);
-	*/
-
-		struct sockaddr_in myaddr;      /* our address */
+			struct sockaddr_in myaddr;      /* our address */
         struct sockaddr_in remaddr;     /* remote address */
         socklen_t addrlen = sizeof(remaddr);            /* length of addresses */
         int recvlen;                    /* # bytes received */
-        int fd;                         /* our socket */
         unsigned char buf[BUFSIZE];     /* receive buffer */
 
         /* create a UDP socket */
