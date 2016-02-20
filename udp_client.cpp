@@ -1,22 +1,27 @@
 #include "udp_client.h"
 
-UDP_Client::UDP_Client(char recipientAddr[128]) {
-	memcpy(this->recipientAddr, recipientAddr, sizeof(recipientAddr));
+/*
+* @author Arushi Rai
+*/
+
+UDP_Client::UDP_Client(string address, int port) {
+	//buffer = new Buffer("UDP Send Buffer", BUFFER_SIZE);
+	PORT = port;
+	char *temp = address;
+	memcpy(recipientAddr, temp, sizeof(recipientAddr));
 	setup();
 }
 
 //ic
 void UDP_Client::setup() {
-	//binds socket and sets upp server address
-	int udp_socket;
-    
-    if ((udp_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        std::perror("cannot create socket");
+	//binds socket and sets udp server address    
+	if ((udp_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+        perror("cannot create socket");
     }
 
     struct sockaddr_in myaddr;
     
-    bindSocket(udp_socket, myaddr);
+    bindSocket(udp_socket, &myaddr);
 
     //initializes the servaddr struct
     memset((char*)&servaddr, 0, sizeof(servaddr));
@@ -29,47 +34,47 @@ void UDP_Client::setup() {
 void UDP_Client::addToSendBuffer(string message) {
 	if (!validate(message)) //if the data fails the validation, then don't send 
 		return;
-
-	timestamp(&message, true);
-	buffer.push_back(message);
+	//Datum temp = Datum(message, "std::string target", "UDP Protocol");
+	//timestamp(&temp, true);
+	buffer.push(message); 
 }
-
+    
 void UDP_Client::send() {
-	string data;
-	data = empty();
-	char* message = data;
+	//Datum data;
+	//data = empty();
+	char* message = buffer.front();
+	buffer.pop();
 	if (sendto(udp_socket, message, strlen(message), 0, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
-		perror("sendto failed");
+		std::perror("sendto failed");
 	return;
 }
 
-void UDPClient::bindSocket (int s, struct sockaddr_in* myaddr) {
+void UDP_Client::bindSocket (int s, struct sockaddr_in* myaddr) {
     memset((char *)myaddr, 0, sizeof(*myaddr));
     
     *myaddr.sin_family = AF_INET;
     *myaddr.sin_addr = htonl(INADDR_ANY); //IP address
-    *myaddr.sin_port = htons(7848); //socket
+    *myaddr.sin_port = htons(PORT); //socket
     if((bind(s, (struct sockaddr *)myaddr, sizeof(*myaddr))) < 0)
-        perror("cannot bind");  
+        std::perror("cannot bind");  
 }
 //ic
-bool UDP_Client::validate() {
+bool UDP_Client::validate(string data) {
 	bool validation = true; //change default to false after receiving data format
 
 	return validation;
 }
 
 //ic
-string UDP_Client::empty() {
-	string data = buffer.front();
-	buffer.pop();
+/*Datum UDP_Client::empty() {
+	Datum data = buffer.pop();
 	timestamp(&data, false);
 
 	return data;
-}
+} */
 
-void UDP_Client::timestamp(string* data, bool add) {
-	string time;
+/*void UDP_Client::timestamp(Datum* data, bool add) {
+	/*string time;
 
 	if (add)
 		time = "; ASB: "; //stands for added to send buffer
@@ -78,7 +83,12 @@ void UDP_Client::timestamp(string* data, bool add) {
 
 	//time += get time here
 	time += ";"
-	*data += time;
+	*data += time; */
+//}
+
+void UDP_Client::end() {
+        close(udp_socket);
 }
+
 
 

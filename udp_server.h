@@ -1,23 +1,44 @@
-#include <string>
-#include <queue>
-#include "string.h"
+#ifndef __INTERCHANGE_UDP_SERVER_H
+#define __INTERCHANGE_UDP_SERVER_H
 
-#define PORT			5789
-#define BUFFER_LENGTH   64 //enter bytes
+#include <queue>
+#include <string>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdio.h> //used for fprintf
+
+//#include "..\Buffer.h"
+//#include "..\Datum.h"
+
+#define BUFFER_SIZE 64
 
 using namespace std;
+
+/*
+* @author Arushi Rai
+*/
+
 class UDP_Server {
 private:
-	//DataContainer object
-	char recipientAddr[128];
-	int server_socket;
+	char recipientAddr[32];
 	queue <string> buffer;
+
+	int server_socket;
+	int PORT;
+	
 	void start();	
-	void timestamp(string* data, bool add);
+	//void timestamp(Datum* data, bool add);
 	bool validate(string data); //validates the buffer
+	struct sockaddr_in remaddr; // remote address 
+	socklen_t addrlen; //length of addresses 
 
 public:
-	UDP_Server(char recipientAddr[128]);
+	UDP_Server(string address, int port);
 	void receive();
-	string empty(); //empties buffer //use a more intuitive name
+	//string empty(); //empties buffer //use a more intuitive name
+	void end();
+
 };
+	
+#endif

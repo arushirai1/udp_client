@@ -1,29 +1,44 @@
-#include <string>
+#ifndef __INTERCHANGE_UDP_CLIENT_H
+#define __INTERCHANGE_UDP_CLIENT_H
+
 #include <queue>
+#include <string>
 #include <string.h> 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h> //used for fprintf
 
-#define PORT			5789
-#define BUFFER_LENGTH   64 //enter bytes // never used?
+//#include "..\Buffer.h"
+//#include "..\Datum.h"
+
+#define BUFFER_SIZE 64 //needs to be changed
 
 using namespace std;
+
+/*
+* @author Arushi Rai
+*/
+
 class UDP_Client {
 private:
-	//DataContainer object
-	char recipientAddr[128];
-	queue <string> buffer; 
+	char recipientAddr[32];
+	queue<string> buffer; 
+
 	int udp_socket;
-    struct sockaddr_in servaddr;
+	int PORT;
+	struct sockaddr_in servaddr;
+
    	void setup();
    	void bindSocket(int s, struct sockaddr_in* myaddr);	
-	void timestamp(string* data, bool add);
+	//void timestamp(Datum* data, bool add);
 	bool validate(string data); //validates the buffer
-	string empty(); //empties buffer 
+	//string empty(); //empties buffer 
 
 public:
-	UDP_Client();
+	UDP_Client(string address, int port);
 	void send(); //sends the next item in the buffer,  empties it as well
 	void addToSendBuffer(string message);
+	void end();
 };
+
+#endif
