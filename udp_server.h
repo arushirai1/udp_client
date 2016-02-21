@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h> //used for fprintf
+#include <netdb.h>
+#include <iostream>
 
 //#include "..\Buffer.h"
 //#include "..\Datum.h"

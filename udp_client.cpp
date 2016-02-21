@@ -7,7 +7,7 @@
 UDP_Client::UDP_Client(string address, int port) {
 	//buffer = new Buffer("UDP Send Buffer", BUFFER_SIZE);
 	PORT = port;
-	char *temp = address;
+	char* temp = (char*)address.c_str();
 	memcpy(recipientAddr, temp, sizeof(recipientAddr));
 	setup();
 }
@@ -19,15 +19,16 @@ void UDP_Client::setup() {
         perror("cannot create socket");
     }
 
-    struct sockaddr_in myaddr;
-    
-    bindSocket(udp_socket, &myaddr);
-
+    bindSocket();
+    struct hostent *hp;     /* host information */
+    char *host = "localhost";
+    hp = gethostbyname(host);
     //initializes the servaddr struct
     memset((char*)&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(PORT);
-	memcpy((void *)&servaddr.sin_addr, recipientAddr[0], recipientAddr_length);
+	memcpy((void *)&servaddr.sin_addr, hp->h_addr_list[0], hp->h_length);
+	cout << "Init" << endl;
 
 }
 
@@ -42,21 +43,21 @@ void UDP_Client::addToSendBuffer(string message) {
 void UDP_Client::send() {
 	//Datum data;
 	//data = empty();
-	char* message = buffer.front();
+	char* message = (char*) buffer.front().c_str();
 	buffer.pop();
-	if (sendto(udp_socket, message, strlen(message), 0, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
-		std::perror("sendto failed");
+	if (sendto(udp_socket, message, strlen(message), 0, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) 
+		perror("sendto failed");
 	return;
 }
 
-void UDP_Client::bindSocket (int s, struct sockaddr_in* myaddr) {
-    memset((char *)myaddr, 0, sizeof(*myaddr));
+void UDP_Client::bindSocket () {
+    memset((char *)&myaddr, 0, sizeof(myaddr));
     
-    *myaddr.sin_family = AF_INET;
-    *myaddr.sin_addr = htonl(INADDR_ANY); //IP address
-    *myaddr.sin_port = htons(PORT); //socket
-    if((bind(s, (struct sockaddr *)myaddr, sizeof(*myaddr))) < 0)
-        std::perror("cannot bind");  
+    myaddr.sin_family = AF_INET;
+    myaddr.sin_addr.s_addr = htonl(INADDR_ANY); //IP address
+    myaddr.sin_port = htons(8934); //socket
+    if((bind(udp_socket, (struct sockaddr*)&myaddr, sizeof(myaddr))) < 0)
+        perror("cannot bind");  
 }
 //ic
 bool UDP_Client::validate(string data) {
@@ -87,7 +88,7 @@ bool UDP_Client::validate(string data) {
 //}
 
 void UDP_Client::end() {
-        close(udp_socket);
+        //close(udp_socket);
 }
 
 

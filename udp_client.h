@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h> //used for fprintf
+#include <netdb.h>
+#include <iostream>
 
 //#include "..\Buffer.h"
 //#include "..\Datum.h"
@@ -27,9 +29,10 @@ private:
 	int udp_socket;
 	int PORT;
 	struct sockaddr_in servaddr;
+	struct sockaddr_in myaddr;
 
    	void setup();
-   	void bindSocket(int s, struct sockaddr_in* myaddr);	
+   	void bindSocket();	
 	//void timestamp(Datum* data, bool add);
 	bool validate(string data); //validates the buffer
 	//string empty(); //empties buffer 
